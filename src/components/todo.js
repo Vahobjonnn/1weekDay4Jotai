@@ -1,38 +1,22 @@
-import axios from "axios";
-import { create } from "zustand";
-export const api="https://to-dos-api.softclub.tj/api/to-dos";
-export const useTodo= create((set,get)=> ({
-    data:[],
-    getData:async ()=> {
-        try {
-           let {data}=await axios.get(api);
-           set(()=> ({data:data.data}))
-        } catch (error) {
-           console.log(error)
-        }
+import { atom } from "jotai";
+
+export const dataJotai=atom([
+    {
+        id:1,
+        name:"Vahobjon",
+        job:"Farmer"
     },
-    deleteId:async (id)=> {
-        try {
-            await axios.delete(api+"?id="+id)
-            get().getData()
-        } catch (error) {
-            console.log(error)
-        }
-    },
-    addUser:async (user) => {
-        try {
-            await axios.post(api,user)
-            get().getData()
-        } catch (error) {
-            console.log(error)
-        }
-    },
-    editUser:async (user) => {
-        try {
-            await axios.put(api,user)
-            get().getData()
-        } catch (error) {
-            console.log(error)
-        }
-    }
-}))
+])
+
+
+export const deleteId=atom(null, (get,set,id)=> {
+    set(dataJotai, get(dataJotai).filter((el)=> el.id!==id))
+})
+
+export const addUser=atom(null, (get,set,user)=> {
+  set(dataJotai, [...get(dataJotai),user])
+} )
+
+export const editUserJotai=atom(null,(get,set,user)=>{
+    set(dataJotai,  get(dataJotai).map((el)=> el.id==user.id ? user : el))
+})
